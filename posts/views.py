@@ -1,6 +1,6 @@
 from rest_framework import viewsets, permissions, exceptions
 from rest_framework.authentication import TokenAuthentication
-from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.generics import get_object_or_404
 
 from .models import Post, Comment
 from .permissions import IsOwnerOrReadOnly
@@ -35,10 +35,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     lookup_fields = ('post', 'id')
 
     def perform_create(self, serializer):
-        try:
-            Post.objects.get(pk=self.kwargs['p_id'])
-        except ObjectDoesNotExist:
-            raise exceptions.NotFound('Запись не найдена')
+        get_object_or_404(Post.objects, pk=self.kwargs['p_id'])
         if self.request.user.is_authenticated:
             serializer.save(author=self.request.user,
                             post_id=self.kwargs['p_id']
