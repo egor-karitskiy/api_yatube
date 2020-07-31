@@ -1,6 +1,6 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, exceptions
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.exceptions import PermissionDenied
+from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Post, Comment
 from .permissions import IsOwnerOrReadOnly
@@ -16,10 +16,11 @@ class PostViewSet(viewsets.ModelViewSet):
                           ]
 
     def perform_create(self, serializer):
+        print(serializer.get_fields())
         if self.request.user.is_authenticated:
             serializer.save(author=self.request.user)
         else:
-            raise PermissionDenied(
+            raise exceptions.PermissionDenied(
                 'Поститься разрешено только авторизованным пользователям'
             )
 
@@ -34,12 +35,16 @@ class CommentViewSet(viewsets.ModelViewSet):
     lookup_fields = ('post', 'id')
 
     def perform_create(self, serializer):
+        try:
+            Post.objects.get(pk=self.kwargs['p_id'])
+        except ObjectDoesNotExist:
+            raise exceptions.NotFound('Запись не найдена')
         if self.request.user.is_authenticated:
             serializer.save(author=self.request.user,
                             post_id=self.kwargs['p_id']
                             )
         else:
-            raise PermissionDenied(
+            raise exceptions.PermissionDenied(
                 'Комментировать разрешено только авторизованным пользователям'
             )
 

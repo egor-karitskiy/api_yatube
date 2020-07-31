@@ -7,8 +7,7 @@ from posts.views import PostViewSet, CommentViewSet
 
 router = DefaultRouter()
 router.register('api/v1/posts', PostViewSet)
-router.register(r'api/v1/posts/(?P<p_id>\d+)/comments',
-                CommentViewSet)
+router.register(r'api/v1/posts/(?P<p_id>\d+)/comments', CommentViewSet)
 
 urlpatterns = [
     path('api/v1/api-token-auth/', fwv.obtain_auth_token),
