@@ -13,6 +13,8 @@ class Post(models.Model):
                               blank=True)
 
     def __str__(self):
+        if len(self.text) > 30:
+            return self.text[:30] + '...'
         return self.text
 
 
