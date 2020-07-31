@@ -17,10 +17,15 @@ class PostSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     author_name = serializers.CharField(source='author.get_full_name',
-                                        required=False)
+                                        required=False
+                                        )
     author = serializers.CharField(source='author.username',
-                                   required=False)
-    post = serializers.IntegerField(source='post_id', required=False)
+                                   required=False
+                                   )
+    post = serializers.IntegerField(source='post.id',
+                                    required=False,
+                                    read_only=True
+                                    )
 
     class Meta:
         fields = '__all__'

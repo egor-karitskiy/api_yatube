@@ -16,7 +16,6 @@ class PostViewSet(viewsets.ModelViewSet):
                           ]
 
     def perform_create(self, serializer):
-        print(serializer.get_fields())
         if self.request.user.is_authenticated:
             serializer.save(author=self.request.user)
         else:
